@@ -1,5 +1,6 @@
 package com.example.diceroller
 
+import android.media.Image
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,10 +50,18 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Hàm dùng để lăn xúc xắc
+ *
+ * Không để lần lăn tiếp theo trung với laanf lăn phía trước
+ */
+
 @Composable
 fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
 
     var result by remember { mutableStateOf(1) }
+
+    var currentResult by remember { mutableStateOf(result) }
 
     val imageResource = when (result) {
         1 -> R.drawable.dice_1
@@ -63,21 +73,70 @@ fun DiceWithButtonAndImage(modifier: Modifier = Modifier) {
     }
 
     Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Image(
             painter = painterResource(imageResource),
-            contentDescription = "1"
+            contentDescription = "Dice roller"
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Button(onClick = {
 
-        Button(onClick = { result = (1..6).random() }) {
-            Text(text = stringResource(R.string.roll))
+            /**
+             * Cách1:  này dùng hàm do while
+             * Vì lúc nào cx sẽ cần lawn xúc xắc nên dùng do while khá hợp lý
+             * lặp cho đến khi newResult != result
+             * sau đó gán result = newResult
+             */
+//            var newResult: Int
+//            do {
+//                newResult = (1..6).random()
+//            } while (newResult == result)
+//            result = newResult
+
+
+            /**
+             * Cách 2: Tạo ra 1 biến currentResult để theo dõi biễn hiện tại
+             * Nếu currentResult == result thì lăn lại xúc xắc
+             * Sau khi đã khác biệt -> Thoát khỏi vòng lặp thì gán currentResult = result
+             */
+
+//            result = (1..6).random()
+//            while (result == currentResult) {
+//                result = (1..6).random()
+//            }
+//            currentResult = result
+
+            /**
+             * Cách 3: Dùng hàm filter để lọc
+             * Tạo ra 1 danh sách kết quả có thể xảy ra
+             * Sau đó dùng hàm lọc để lọc danh sách đó
+             * Danh sách đó ko được chứa kết quả của result hiện tại
+             * Sau đó lấy ra 1 phần tử ngẫu nhiên trong danh sách đó gà gán cho result
+             */
+
+//            val allFace = 1..6
+//            val posibleResult = allFace.filter { it != result }
+//            result = posibleResult.random()
+
+            /**
+             * Cách 4: Dùng generateSequence để tạo ra 1 chuỗi ngẫu nhiên
+             * Tạo ra 1 chuỗi vô hạn lần tung xúc xắc, và lấy ra kết quar đầu tiên không trùng vowis result
+             */
+
+            result = generateSequence { (1..6).random() }.first { it != result }
+
+        }) {
+            Text(
+                text = "ROLL",
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
+
     }
 
 }
