@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,7 +93,7 @@ fun LemonTree(modifier: Modifier = Modifier) {
         Box(
             modifier = modifier
                 .size(300.dp)
-                .clip(CircleShape)
+                .clip(RoundedCornerShape(32.dp))
                 .clickable(
                     onClick = {
                         if (currentChoice >= 3) {
@@ -119,10 +120,10 @@ fun LemonTree(modifier: Modifier = Modifier) {
                 )
                 .border(
                     width = 2.dp,
-                    color = Color.White,
-                    shape = CircleShape
+                    color = Color(0xFFADDD8E),
+                    shape = RoundedCornerShape(32.dp)
                 )
-                .background(Color.Green),
+                .background(Color(0xFFD9F3CC)),
             contentAlignment = Alignment.Center,
         ) {
             Image(
