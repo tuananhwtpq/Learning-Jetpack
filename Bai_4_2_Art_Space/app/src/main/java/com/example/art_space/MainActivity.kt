@@ -1,6 +1,8 @@
 package com.example.art_space
 
 import android.os.Bundle
+import android.os.Debug
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,6 +29,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +43,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.art_space.ui.theme.Art_SpaceTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalGraphicsContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,9 +71,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ArtSpace(modifier: Modifier = Modifier) {
 
-//    val imageResouce = listOf<Int>(
-//        R.drawable.bg_light,
-//    )
+    val imageResouce = listOf<Int>(
+        R.drawable.bg_light,
+        R.drawable.new1,
+        R.drawable.new2
+    )
+
+    var imageChoose by remember { mutableStateOf(0) }
 
     Column(
         modifier = modifier
@@ -75,23 +89,26 @@ fun ArtSpace(modifier: Modifier = Modifier) {
         //region IMAGE
         Card(
             modifier = modifier
-                .background(Color.White)
                 .padding(12.dp)
                 .width(300.dp)
                 .height(450.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
         ) {
             Image(
-                painter = painterResource(R.drawable.bg_light),
+                painter = painterResource(imageResouce[imageChoose]),
                 contentDescription = "Image description",
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(36.dp),
-                alignment = Alignment.Center
+                    .padding(24.dp),
+                contentScale = ContentScale.Crop
             )
         }
 
-        Spacer(modifier = modifier.height(12.dp))
+        Spacer(modifier = modifier.height(50.dp))
 
         //region AUTHOR INFO
         Column(
@@ -109,7 +126,8 @@ fun ArtSpace(modifier: Modifier = Modifier) {
                 fontStyle = FontStyle.Normal,
                 modifier = modifier.fillMaxWidth(),
                 fontWeight = FontWeight.Bold,
-                fontSize = 36.sp
+                fontSize = 36.sp,
+                maxLines = 2,
             )
 
             Spacer(modifier = modifier.height(4.dp))
@@ -143,13 +161,18 @@ fun ArtSpace(modifier: Modifier = Modifier) {
         ) {
             CustomButton(
                 text = "Previous",
-                onButtonClick = { },
+                onButtonClick = {
+                    imageChoose = (imageChoose - 1 + imageResouce.size) % (imageResouce.size)
+                },
                 modifier = modifier
             )
 
             CustomButton(
                 text = "Next",
-                onButtonClick = {},
+                onButtonClick = {
+                    imageChoose = (imageChoose + 1) % (imageResouce.size)
+                    Log.d("TAG", "ArtSpace: $imageChoose")
+                },
                 modifier = modifier
             )
         }
@@ -157,6 +180,7 @@ fun ArtSpace(modifier: Modifier = Modifier) {
     }
 }
 
+//region CUSTOM BUTTON
 @Composable
 fun CustomButton(
     text: String,
@@ -168,13 +192,15 @@ fun CustomButton(
         onClick = onButtonClick,
         shape = RoundedCornerShape(32.dp),
         colors = ButtonDefaults.textButtonColors(
-            containerColor = Color.LightGray,
+            containerColor = Color.Blue,
             contentColor = Color.White
         ),
         modifier = modifier.width(120.dp)
     ) {
         Text(
-            text = text
+            text = text,
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold
         )
     }
 }
