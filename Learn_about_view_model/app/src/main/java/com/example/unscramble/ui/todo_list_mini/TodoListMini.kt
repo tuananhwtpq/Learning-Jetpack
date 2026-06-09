@@ -9,11 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Text
@@ -35,8 +34,7 @@ fun TodoListMini(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .systemBarsPadding()
-            .verticalScroll(rememberScrollState()),
+            .systemBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
@@ -57,7 +55,6 @@ fun TodoListMini(
                 imeAction = ImeAction.Done
             ),
             keyboardActions = KeyboardActions(onDone = {
-                // Handle the action when the user presses the "Done" button on the}
 
             })
         )
@@ -74,6 +71,7 @@ fun TodoListMini(
             Text(text = "Add Task")
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -82,13 +80,20 @@ fun TodoListMini(
             }
         }
 
+        Text(
+            text = "Empty tasks", modifier = Modifier.align(Alignment.CenterHorizontally),
+        )
+
     }
 }
 
 @Composable
 fun SingleTask(modifier: Modifier = Modifier) {
 
-    Row(modifier = modifier.fillMaxWidth()) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Checkbox(
             checked = false,
             onCheckedChange = {
@@ -96,7 +101,13 @@ fun SingleTask(modifier: Modifier = Modifier) {
             },
             modifier = Modifier.size(16.dp)
         )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(text = "Task Name", modifier = Modifier.weight(1f))
+        Button(onClick = {
 
+        }) {
+            Text(text = "Delete")
+        }
     }
 }
 
