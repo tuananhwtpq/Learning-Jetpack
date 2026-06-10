@@ -23,11 +23,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.unscramble.ui.GameScreen
-import com.example.unscramble.ui.GameViewModel
-import com.example.unscramble.ui.counter_advanced.CounterAdvanced
-import com.example.unscramble.ui.counter_advanced.CounterAdvancedScreen
 import com.example.unscramble.ui.theme.UnscrambleTheme
+import com.example.unscramble.ui.todo_list_mini.TodoListMini
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    CounterAdvancedScreen()
+                    TodoListMini()
                 }
             }
         }
