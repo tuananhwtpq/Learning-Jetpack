@@ -7,7 +7,9 @@ data class TodoUiState(
     val taskList: List<Task> = emptyList(),
     val filteredTaskList: List<Task> = emptyList(),
     val errorMessage: String? = null,
-    val totalTaskDone: Int = 0,
-    val totalTask: Int = 0,
+
     val currentFilter: TodoListFilter = TodoListFilter.ALL
-)
+) {
+    val totalTaskDone: Int get() = taskList.count { it.isDone }
+    val totalTask: Int get() = taskList.size
+}

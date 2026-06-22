@@ -35,16 +35,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.unscramble.ui.theme.UnscrambleTheme
+import com.example.unscramble.ui.todo_list_mini.data.Task
+import com.example.unscramble.ui.todo_list_mini.data.TodoUiEvent
+import com.example.unscramble.ui.todo_list_mini.data.TodoUiState
 import com.example.unscramble.ui.todo_list_mini.viewmodel.TodoListFilter
 import com.example.unscramble.ui.todo_list_mini.viewmodel.TodoViewModel
 
 @Composable
-fun TodoListMini(
-    modifier: Modifier = Modifier,
+fun ToDoListScreen(
     todoViewModel: TodoViewModel = viewModel()
 ) {
-
     val uiState by todoViewModel.uiState.collectAsState()
+    TodoListMini(
+        modifier = Modifier.fillMaxSize(),
+        onEvent = todoViewModel::onEvent,
+        uiState = uiState
+    )
+}
+
+@Composable
+fun TodoListMini(
+    modifier: Modifier = Modifier,
+    onEvent: (TodoUiEvent) -> Unit,
+    uiState: TodoUiState
+) {
+
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -59,7 +74,7 @@ fun TodoListMini(
         OutlinedTextField(
             value = uiState.inputMessage,
             onValueChange = {
-                todoViewModel.updateInputMessage(it)
+                onEvent(TodoUiEvent.UpdateUserInput(it))
             },
             modifier = Modifier
                 .padding(horizontal = 12.dp)
@@ -73,7 +88,7 @@ fun TodoListMini(
                 keyboardType = KeyboardType.Text
             ),
             keyboardActions = KeyboardActions(onDone = {
-                todoViewModel.addTaskToList()
+                onEvent(TodoUiEvent.AddTask)
                 keyboardController?.hide()
             }),
             shape = RoundedCornerShape(32.dp),
@@ -84,14 +99,15 @@ fun TodoListMini(
 
         if (uiState.errorMessage != null) {
             Text(
-                text = uiState.errorMessage.toString(),
+                text = uiState.errorMessage,
                 color = Color.Red,
                 modifier = Modifier.padding(top = 8.dp)
             )
         }
 
         Button(onClick = {
-            todoViewModel.addTaskToList()
+//            todoViewModel.addTaskToList()
+            onEvent(TodoUiEvent.AddTask)
             keyboardController?.hide()
         }, modifier = Modifier.padding(top = 16.dp)) {
             Text(text = "Add Task")
@@ -125,19 +141,19 @@ fun TodoListMini(
                 .padding(horizontal = 12.dp)
         ) {
             Button(onClick = {
-                todoViewModel.updateFilter(TodoListFilter.ALL)
+                onEvent(TodoUiEvent.UpdateFilter(TodoListFilter.ALL))
             }, modifier = Modifier.weight(1f)) {
                 Text(text = "All")
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
-                todoViewModel.updateFilter(TodoListFilter.DONE)
+                onEvent(TodoUiEvent.UpdateFilter(TodoListFilter.DONE))
             }, modifier = Modifier.weight(1f)) {
                 Text(text = "Done")
             }
             Spacer(modifier = Modifier.width(8.dp))
             Button(onClick = {
-                todoViewModel.updateFilter(TodoListFilter.UNDONE)
+                onEvent(TodoUiEvent.UpdateFilter(TodoListFilter.UNDONE))
             }, modifier = Modifier.weight(1f)) {
                 Text(text = "Undone")
             }
@@ -154,10 +170,15 @@ fun TodoListMini(
                     taskName = it.taskName,
                     isChecked = it.isDone,
                     onCheckedChange = { checked ->
-                        todoViewModel.updateCheckedChange(it.id, checked)
+                        onEvent(
+                            TodoUiEvent.UpdateCheckedChange(
+                                it.id, checked
+                            )
+                        )
                     },
                     onDeleteClick = {
-                        todoViewModel.deleteTask(it.id)
+//                        todoViewModel.deleteTask(it.id)
+                        onEvent(TodoUiEvent.DeleteTask(it.id))
                     },
                     modifier = Modifier.padding(12.dp)
                 )
@@ -212,6 +233,20 @@ fun SingleTask(
 @Preview(showBackground = true, showSystemUi = true)
 fun TodoListMiniPreview() {
     UnscrambleTheme {
-        TodoListMini()
+        val mockTasks = listOf(
+            Task(id = 1, taskName = "Task 1", isDone = false),
+            Task(id = 2, taskName = "Task 2", isDone = true),
+            Task(id = 3, taskName = "Task 3", isDone = false),
+        )
+
+        TodoListMini(
+            uiState = TodoUiState(
+                inputMessage = "Code con dang do",
+                taskList = mockTasks,
+                filteredTaskList = mockTasks,
+                errorMessage = null
+            ),
+            onEvent = {}
+        )
     }
 }

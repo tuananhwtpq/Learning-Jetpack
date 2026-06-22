@@ -2,6 +2,7 @@ package com.example.unscramble.ui.todo_list_mini.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.example.unscramble.ui.todo_list_mini.data.Task
+import com.example.unscramble.ui.todo_list_mini.data.TodoUiEvent
 import com.example.unscramble.ui.todo_list_mini.data.TodoUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +15,17 @@ class TodoViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(TodoUiState())
     val uiState: StateFlow<TodoUiState> = _uiState.asStateFlow()
 
-    fun updateInputMessage(message: String) {
+    fun onEvent(event: TodoUiEvent) {
+        when (event) {
+            TodoUiEvent.AddTask -> addTaskToList()
+            is TodoUiEvent.DeleteTask -> deleteTask(event.taskId)
+            is TodoUiEvent.UpdateCheckedChange -> updateCheckedChange(event.taskId, event.isChecked)
+            is TodoUiEvent.UpdateFilter -> updateFilter(event.filter)
+            is TodoUiEvent.UpdateUserInput -> updateInputMessage(event.input)
+        }
+    }
+
+    private fun updateInputMessage(message: String) {
         _uiState.update { currentState ->
             currentState.copy(
                 inputMessage = message,
@@ -23,7 +34,7 @@ class TodoViewModel : ViewModel() {
         }
     }
 
-    fun addTaskToList() {
+    private fun addTaskToList() {
         if (uiState.value.inputMessage.isBlank()) {
             _uiState.update { currentState ->
                 currentState.copy(
@@ -44,14 +55,13 @@ class TodoViewModel : ViewModel() {
                     filteredTaskList = getListByFilter(updatedList, currentState.currentFilter),
                     inputMessage = "",
                     errorMessage = null,
-                    totalTask = updatedList.size
                 )
             }
         }
     }
 
 
-    fun updateCheckedChange(taskId: Int, isChecked: Boolean) {
+    private fun updateCheckedChange(taskId: Int, isChecked: Boolean) {
         _uiState.update { currentState ->
             val updatedList = currentState.taskList.map { task ->
                 if (task.id == taskId) task.copy(isDone = isChecked) else task
@@ -60,25 +70,22 @@ class TodoViewModel : ViewModel() {
             currentState.copy(
                 taskList = updatedList,
                 filteredTaskList = getListByFilter(updatedList, currentState.currentFilter),
-                totalTaskDone = updatedList.count { it.isDone }
             )
         }
     }
 
-    fun deleteTask(taskId: Int) {
+    private fun deleteTask(taskId: Int) {
         _uiState.update { currentState ->
             val updatedList = currentState.taskList.filterNot { it.id == taskId }
 
             currentState.copy(
                 taskList = updatedList,
                 filteredTaskList = getListByFilter(updatedList, currentState.currentFilter),
-                totalTask = updatedList.size,
-                totalTaskDone = updatedList.count { it.isDone }
             )
         }
     }
 
-    fun updateFilter(typeFilter: TodoListFilter) {
+    private fun updateFilter(typeFilter: TodoListFilter) {
         _uiState.update { currentState ->
             currentState.copy(
                 currentFilter = typeFilter,

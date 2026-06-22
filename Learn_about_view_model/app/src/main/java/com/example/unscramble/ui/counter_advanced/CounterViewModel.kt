@@ -10,7 +10,16 @@ class CounterViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(CounterUIState())
     val uiState: StateFlow<CounterUIState> = _uiState.asStateFlow()
-    fun decreaseCount() {
+
+    fun onEvent(event: CounterUiEvent) {
+        when (event) {
+            CounterUiEvent.Decrement -> decreaseCount()
+            CounterUiEvent.Increment -> increaseCount()
+            CounterUiEvent.Reset -> resetCount()
+        }
+    }
+
+    private fun decreaseCount() {
         val nextValue = uiState.value.count - 1
         if (nextValue < 0) {
             _uiState.update { currentState ->
@@ -29,7 +38,7 @@ class CounterViewModel : ViewModel() {
         }
     }
 
-    fun increaseCount() {
+    private fun increaseCount() {
         val nextValue = uiState.value.count + 1
         if (nextValue > 10) {
             _uiState.update { currentState ->
@@ -48,7 +57,7 @@ class CounterViewModel : ViewModel() {
         }
     }
 
-    fun resetCount() {
+    private fun resetCount() {
         _uiState.value = CounterUIState(
             count = 0,
             isShowWarning = false,

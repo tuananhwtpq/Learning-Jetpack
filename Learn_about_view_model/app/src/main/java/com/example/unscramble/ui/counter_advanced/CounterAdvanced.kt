@@ -1,6 +1,5 @@
 package com.example.unscramble.ui.counter_advanced
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +15,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.unscramble.ui.counter_advanced.CounterViewModel
 import com.example.unscramble.ui.theme.UnscrambleTheme
 
 
@@ -33,15 +30,7 @@ fun CounterAdvancedScreen(
 
     CounterAdvanced(
         uiState = uiState,
-        onIncrease = {
-            counterViewModel.increaseCount()
-        },
-        onDecrease = {
-            counterViewModel.decreaseCount()
-        },
-        onReset = {
-            counterViewModel.resetCount()
-        },
+        onEvent = counterViewModel::onEvent,
         modifier = Modifier.fillMaxSize()
     )
 
@@ -50,9 +39,7 @@ fun CounterAdvancedScreen(
 @Composable
 fun CounterAdvanced(
     uiState: CounterUIState,
-    onIncrease: () -> Unit,
-    onDecrease: () -> Unit,
-    onReset: () -> Unit,
+    onEvent: (CounterUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -70,7 +57,7 @@ fun CounterAdvanced(
         ) {
             // BUtton Decrease
             Button(onClick = {
-                onDecrease()
+                onEvent(CounterUiEvent.Decrement)
             }) {
                 Text(text = "-", fontSize = 24.sp)
             }
@@ -83,14 +70,14 @@ fun CounterAdvanced(
 
             //Button increase
             Button(onClick = {
-                onIncrease()
+                onEvent(CounterUiEvent.Increment)
             }) {
                 Text(text = "+", fontSize = 24.sp)
             }
         }
 
         Button(onClick = {
-            onReset()
+            onEvent(CounterUiEvent.Reset)
         }, modifier = Modifier.padding(top = 16.dp)) {
             Text(text = "Reset")
         }
@@ -107,15 +94,5 @@ fun CounterAdvanced(
 @Preview(showBackground = true)
 fun CounterAdvancedPreview() {
     UnscrambleTheme {
-        CounterAdvanced(
-            uiState = CounterUIState(
-                count = 5,
-                isShowWarning = true,
-                messageWarning = "Counter cannot be less than 0"
-            ),
-            onIncrease = {},
-            onDecrease = {},
-            onReset = {}
-        )
     }
 }
