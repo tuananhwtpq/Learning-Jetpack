@@ -23,7 +23,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.example.unscramble.ui.quizz_app_mini.QuizAppRoute
+import com.example.unscramble.ui.expense_tracker_mini.ui.ExpenseMiniRoute
 import com.example.unscramble.ui.theme.UnscrambleTheme
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    QuizAppRoute()
+                    ExpenseMiniRoute()
                 }
             }
         }
